@@ -1,0 +1,43 @@
+[general]
+# List of accounts to be synced, separated by a comma.
+metadata = /vol/config/metadata
+accounts = user@example.org
+maxsyncaccounts = 3
+ui = basic
+socktimeout = 120
+
+[mbnames]
+enabled = yes
+filename = /vol/config/email/mailboxes
+header = "mailboxes "
+peritem = "+%(accountname)s/%(foldername)s"
+sep = " "
+footer = "\n"
+
+[Account user@example.org]
+# Identifier for the local repository; e.g. the maildir to be synced via IMAP.
+localrepository = user@example.org-local
+# Identifier for the remote repository; i.e. the actual IMAP, usually non-local.
+remoterepository = user@example.org-remote
+autorefresh = 2
+quick=10
+
+[Repository user@example.org-local]
+# OfflineIMAP supports Maildir, GmailMaildir, and IMAP for local repositories.
+type = Maildir
+# Where should the mail be placed?
+localfolders = /vol/mail/user@example.org
+
+[Repository user@example.org-remote]
+# Remote repos can be IMAP or Gmail, the latter being a preconfigured IMAP.
+type = IMAP
+remotehost = mail.example.org
+remoteuser = user@example.org
+remotepassfile = /vol/secrets/user@example.org.pass
+sslcacertfile: %(systemcacertfile)s
+ssl = yes
+readonly = True
+remoteport = 993
+
+[DEFAULT]
+systemcacertfile = /etc/ssl/certs/ca-certificates.crt
