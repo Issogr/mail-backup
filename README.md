@@ -6,7 +6,6 @@ OfflineIMAP is a GPLv2 software to dispose your mailbox(es) as a local Maildir(s
 
 * `-v /vol` - the base directory of the data volume (if you use docker volume)
 * `-e CONFIG_PATH` (default: `/vol/config`) - where offlineimap should store config files
-* `-e SECRETS_PATH` (default: `/vol/secrets`) - folder for storing secrets (passwords, certificates)
 * `-e MAIL_PATH` (default: `/vol/mail`) - local mail folder base path
 * `-e PUID` for UserID
 * `-e PGID` for GroupID
@@ -22,40 +21,49 @@ docker exec -it offlineimap /bin/bash
 
 ```
 [general]
+# List of accounts to be synced, separated by a comma.
 metadata = /vol/config/metadata
 accounts = user@example.org
 maxsyncaccounts = 3
 ui = basic
 socktimeout = 120
 
-[mbnames]
-enabled = yes
-filename = /vol/config/email/mailboxes
-header = "mailboxes "
-peritem = "+%(accountname)s/%(foldername)s"
-sep = " "
-footer = "\n"
+#Automatic mailbox generation for mutt
+#Disable by default
+#[mbnames]
+#enabled = yes
+#filename = /vol/config/email/mailboxes
+#header = "mailboxes "
+#peritem = "+%(accountname)s/%(foldername)s"
+#sep = " "
+#footer = "\n"
 
 [Account user@example.org]
+# Identifier for the local repository; e.g. the maildir to be synced via IMAP.
 localrepository = user@example.org-local
+# Identifier for the remote repository; i.e. the actual IMAP, usually non-local.
 remoterepository = user@example.org-remote
 autorefresh = 2
 quick=10
 
 [Repository user@example.org-local]
+# OfflineIMAP supports Maildir, GmailMaildir, and IMAP for local repositories.
 type = Maildir
+# Where should the mail be placed?
 localfolders = /vol/mail/user@example.org
 
 [Repository user@example.org-remote]
+# Remote repos can be IMAP or Gmail, the latter being a preconfigured IMAP.
 type = IMAP
 remotehost = mail.example.org
 remoteuser = user@example.org
-remotepassfile = /vol/secrets/user@example.org.pass
+remotepass = mail-password
 sslcacertfile: %(systemcacertfile)s
 ssl = yes
-readonly = True
+readonly = False
 remoteport = 993
 
 [DEFAULT]
 systemcacertfile = /etc/ssl/certs/ca-certificates.crt
+ssl_version = tls1_2
 ```
