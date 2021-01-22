@@ -1,4 +1,5 @@
 # docker-mail-backup
+![icon](https://raw.githubusercontent.com/Issogr/docker-mail-backup/master/logo.png)
 
 OfflineIMAP is a GPLv2 software to dispose your mailbox(es) as a local Maildir(s). For example, this allows reading the mails while offline without the need for your mail reader (MUA) to support disconnected operations. OfflineIMAP will synchronize both sides via IMAP. [OfflineIMAP](http://www.offlineimap.org/about/)
 
