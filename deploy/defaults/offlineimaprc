@@ -7,13 +7,13 @@ ui = basic
 socktimeout = 120
 
 #Automatic mailbox generation for mutt
-[mbnames]
-enabled = yes
-filename = /vol/config/email/mailboxes
-header = "mailboxes "
-peritem = "+%(accountname)s/%(foldername)s"
-sep = " "
-footer = "\n"
+#[mbnames]
+#enabled = yes
+#filename = /vol/config/email/mailboxes
+#header = "mailboxes "
+#peritem = "+%(accountname)s/%(foldername)s"
+#sep = " "
+#footer = "\n"
 
 [Account user@example.org]
 # Identifier for the local repository; e.g. the maildir to be synced via IMAP.
@@ -37,7 +37,7 @@ remoteuser = user@example.org
 remotepass = mail-password
 sslcacertfile: %(systemcacertfile)s
 ssl = yes
-readonly = True
+readonly = False
 remoteport = 993
 
 [DEFAULT]
