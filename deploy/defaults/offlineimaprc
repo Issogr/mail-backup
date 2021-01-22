@@ -6,6 +6,7 @@ maxsyncaccounts = 3
 ui = basic
 socktimeout = 120
 
+#Automatic mailbox generation for mutt
 [mbnames]
 enabled = yes
 filename = /vol/config/email/mailboxes
@@ -33,7 +34,7 @@ localfolders = /vol/mail/user@example.org
 type = IMAP
 remotehost = mail.example.org
 remoteuser = user@example.org
-remotepassfile = /vol/secrets/user@example.org.pass
+remotepass = mail-password
 sslcacertfile: %(systemcacertfile)s
 ssl = yes
 readonly = True
@@ -41,3 +42,4 @@ remoteport = 993
 
 [DEFAULT]
 systemcacertfile = /etc/ssl/certs/ca-certificates.crt
+ssl_version = tls1_2
