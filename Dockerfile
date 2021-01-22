@@ -3,7 +3,7 @@ FROM alpine:3.8
 RUN \
   echo "**** install packages ****" && \
     apk add --no-cache \
-      offlineimap
+      offlineimap ca-certificates
 
 # copy local files
 COPY ./deploy/ /
