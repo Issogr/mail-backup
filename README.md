@@ -12,11 +12,6 @@ OfflineIMAP is a GPLv2 software to dispose your mailbox(es) as a local Maildir(s
 * `-e PGIDS` for additional GroupIDs
 * `-e TZ` for timezone information, eg. Europe/London
 
-It is based on alpine linux with s6 overlay, for shell access whilst the container is running do
-```
-docker exec -it offlineimap /bin/bash
-```
-
 ## Example offlineimaprc
 
 ```
