@@ -56,7 +56,7 @@ remoteuser = user@example.org
 remotepass = mail-password
 sslcacertfile: %(systemcacertfile)s
 ssl = yes
-readonly = False
+readonly = True
 remoteport = 993
 
 [DEFAULT]
