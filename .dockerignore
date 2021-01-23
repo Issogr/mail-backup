@@ -3,3 +3,5 @@ Dockerfile
 docker-compose.yml
 tools.sh
 vol/
+.github/
+logo.png
