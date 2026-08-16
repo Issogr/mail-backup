@@ -1,45 +1,28 @@
 [general]
-# List of accounts to be synced, separated by a comma.
-metadata = /vol/config/metadata
-accounts = user@example.org
-maxsyncaccounts = 3
+metadata = $CONFIG_PATH/metadata
+accounts = backup
+maxsyncaccounts = 1
 ui = basic
 socktimeout = 120
 
-#Automatic mailbox generation for mutt
-#[mbnames]
-#enabled = yes
-#filename = /vol/config/email/mailboxes
-#header = "mailboxes "
-#peritem = "+%(accountname)s/%(foldername)s"
-#sep = " "
-#footer = "\n"
+[Account backup]
+localrepository = backup-local
+remoterepository = backup-remote
+autorefresh = 15
+quick = 10
 
-[Account user@example.org]
-# Identifier for the local repository; e.g. the maildir to be synced via IMAP.
-localrepository = user@example.org-local
-# Identifier for the remote repository; i.e. the actual IMAP, usually non-local.
-remoterepository = user@example.org-remote
-autorefresh = 2
-quick=10
-
-[Repository user@example.org-local]
-# OfflineIMAP supports Maildir, GmailMaildir, and IMAP for local repositories.
+[Repository backup-local]
 type = Maildir
-# Where should the mail be placed?
-localfolders = /vol/mail/user@example.org
+localfolders = $MAIL_PATH/user@example.org
 
-[Repository user@example.org-remote]
-# Remote repos can be IMAP or Gmail, the latter being a preconfigured IMAP.
+[Repository backup-remote]
 type = IMAP
 remotehost = mail.example.org
 remoteuser = user@example.org
-remotepass = mail-password
-sslcacertfile: %(systemcacertfile)s
+remotepassfile = password
 ssl = yes
-readonly = True
+starttls = no
+sslcacertfile = OS-DEFAULT
 remoteport = 993
-
-[DEFAULT]
-systemcacertfile = /etc/ssl/certs/ca-certificates.crt
-ssl_version = tls1_2
+readonly = true
+sync_deletes = no

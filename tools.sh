@@ -1,44 +1,84 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-generate_offlineimap () {
-  cp deploy/defaults/offlineimaprc ./
-  read -p "email address: " EMAIL
-  sed -i -e "s/user@example.org/$EMAIL/g" offlineimaprc
-  read -sp "email password: " PASS
-  echo -e "\n"
-  sed -i -e "s/mail-password/$PASS/g" offlineimaprc
-  read -p "email IMAP: " IMAP
-  sed -i -e "s/mail.example.org/$IMAP/g" offlineimaprc
-  if [[ -f offlineimaprc-e ]]
-  then
-    rm offlineimaprc-e
-  fi
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
+readonly TEMPLATE="${SCRIPT_DIR}/deploy/defaults/offlineimaprc"
+
+usage() {
+  printf '%s\n' \
+    'Usage: ./tools.sh [option]' \
+    '  -d  Generate ./vol/config and ./vol/mail' \
+    '  -g  Generate offlineimaprc and password in the current directory' \
+    '  -c  Remove downloaded mail and synchronization metadata' \
+    '  -h  Display this help'
 }
 
-case $1 in
-"-d")
-  generate_offlineimap
-  mkdir -p vol/config vol/mail
-  mv offlineimaprc vol/config/
-  ;;
-"-g")
-  generate_offlineimap
-  ;;
-"-c")
-  read -p "Clean all docker generated resources (Y/n)? " VALUE
-  if [[ $VALUE != "n" ]]
-  then
-    rm -rf vol/config/metadata vol/mail/*
-  fi
-  ;;
+escape_config_value() {
+  local value=$1
+  value=${value//\\/\\\\}
+  value=${value//&/\\&}
+  value=${value//|/\\|}
+  value=${value//%/%%}
+  printf '%s' "$value"
+}
 
-*)
-  echo -e "Tools:"
-  echo -e "\t[  ] Display help"
-  echo -e "\t[-d] Generate offlineimap local dir scructure and file"
-  echo -e "\t[-g] Generate offlineimaprc with passed parameters"
-  echo -e "\t[-c] Clean all docker generated resources"
-  ;;
+generate_offlineimap() {
+  local email host password escaped_email escaped_host
+
+  if [[ -e offlineimaprc || -e password ]]; then
+    printf 'Refusing to overwrite offlineimaprc or password\n' >&2
+    return 1
+  fi
+
+  read -r -p 'Email address: ' email
+  read -r -s -p 'Email password or app password: ' password
+  printf '\n'
+  read -r -p 'IMAP host: ' host
+
+  if [[ -z $email || -z $password || -z $host ]]; then
+    printf 'Email address, password, and IMAP host are required\n' >&2
+    return 1
+  fi
+
+  escaped_email=$(escape_config_value "$email")
+  escaped_host=$(escape_config_value "$host")
+  sed \
+    -e "s|user@example.org|${escaped_email}|g" \
+    -e "s|mail.example.org|${escaped_host}|g" \
+    "$TEMPLATE" > offlineimaprc
+  printf '%s\n' "$password" > password
+  chmod 600 offlineimaprc password
+}
+
+case "${1:-}" in
+  -d)
+    if [[ -e vol/config/offlineimaprc || -e vol/config/password ]]; then
+      printf 'Refusing to overwrite existing configuration in ./vol/config\n' >&2
+      exit 1
+    fi
+    generate_offlineimap
+    mkdir -p vol/config vol/mail
+    mv offlineimaprc password vol/config/
+    ;;
+  -g)
+    generate_offlineimap
+    ;;
+  -c)
+    read -r -p 'Remove downloaded mail and synchronization metadata (y/N)? ' answer
+    case "${answer:-n}" in
+      y|Y|yes|YES)
+        rm -rf -- vol/config/metadata vol/mail
+        mkdir -p vol/mail
+        ;;
+    esac
+    ;;
+  -h|--help|'')
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 1
+    ;;
 esac

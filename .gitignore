@@ -1,1 +1,4 @@
-vol/
+/vol/
+/.env
+/offlineimaprc
+/password

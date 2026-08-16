@@ -1,7 +1,11 @@
+.git
+.github/
 .gitignore
 Dockerfile
+LICENSE
+README.md
 docker-compose.yml
+logo.png
+tests/
 tools.sh
 vol/
-.github/
-logo.png
